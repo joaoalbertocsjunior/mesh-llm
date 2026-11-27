@@ -376,6 +376,9 @@ pub(super) async fn run_runtime_cli(
         config.gpu.host_ram_offload.unwrap_or(false),
     );
     join_sources::validate_join_token_sources(&options)?;
+    // Before the native runtime, the mesh node and its invite: a port held by
+    // a node already running here would otherwise fail only at the late bind.
+    super::serving_ports::ensure_serving_ports_free(&options).await?;
 
     let disk_cache = configure_node_kv_disk_cache(&config, &options)?;
     for warning in &disk_cache.configured.warnings {
@@ -1864,6 +1867,7 @@ async fn run_auto_inner(
         model_name: &model_name_for_console,
         model_path: &PathBuf::new(),
         api_port,
+        console_port,
         plugin_manager: &plugin_manager,
         affinity_router: &affinity_router,
         control_tx: &control_tx,

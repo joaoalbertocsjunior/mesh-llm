@@ -167,6 +167,7 @@ impl Node {
             gossip_verification: Arc::default(),
             gossip_encoder: Arc::default(),
             gossip_reply_limiter: Arc::default(),
+            peer_discovery: Arc::default(),
             bootstrap_token: Arc::new(Mutex::new(None)),
             join_targets: Arc::new(Mutex::new(Vec::new())),
             first_joined_mesh_ts: Arc::new(Mutex::new(None)),
@@ -256,6 +257,8 @@ impl Node {
             unsaved_owner_attestation: Arc::default(),
             local_endpoints: LocalEndpoints::default(),
             is_membership: false,
+            policy_store: std::sync::Arc::new(std::sync::Mutex::new(None)),
+            policy_applicator: std::sync::Arc::new(std::sync::Mutex::new(None)),
         };
 
         node.maybe_start_control_listener(
